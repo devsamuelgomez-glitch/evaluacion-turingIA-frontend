@@ -1,0 +1,120 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-green);
+  outline-offset: 2px;
+}
+
+/* Utilidades compartidas (BEM: bloques genéricos) */
+.container {
+  width: min(100% - 2 * var(--space-md), var(--container-width));
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: var(--space-2xl);
+  /* Keeps anchored sections clear of the sticky header */
+  scroll-margin-top: 64px;
+}
+
+.section__title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  text-align: center;
+  margin-bottom: var(--space-sm);
+}
+
+.section__title::after {
+  content: '';
+  display: block;
+  width: 56px;
+  height: 4px;
+  margin: var(--space-sm) auto 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-green);
+}
+
+.section__subtitle {
+  text-align: center;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-xl);
+}
+
+.button {
+  display: inline-block;
+  padding: 0.75rem 1.75rem;
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  transition: background var(--transition), color var(--transition), transform var(--transition);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button--primary {
+  background: var(--color-green);
+  color: var(--color-navy);
+}
+
+.button--primary:hover {
+  background: var(--color-mint);
+}
+
+.button--outline {
+  background: transparent;
+  border-color: var(--color-navy);
+  color: var(--color-navy);
+}
+
+.button--outline:hover {
+  background: var(--color-navy);
+  color: var(--color-text-inverse);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
