@@ -1,0 +1,175 @@
+.gallery {
+  background: var(--color-mist);
+}
+
+.gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gallery__tile {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition), box-shadow var(--transition);
+  container-type: inline-size;
+}
+
+.gallery__tile:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.gallery__tile--solid {
+  background: radial-gradient(circle at 50% 35%, var(--color-mint) 0%, var(--color-green) 65%);
+  color: var(--color-navy);
+}
+
+.gallery__tile--pattern {
+  background:
+    radial-gradient(circle at 50% 35%, rgb(31 191 146 / 0.35) 0%, transparent 60%),
+    repeating-linear-gradient(135deg, var(--color-forest) 0 6px, var(--color-navy) 6px 12px);
+  color: var(--color-text-inverse);
+}
+
+.gallery__tile--loading {
+  background: linear-gradient(90deg, #b9c6ce 25%, #d3dce1 50%, #b9c6ce 75%);
+  background-size: 200% 100%;
+  animation: gallery-shimmer 1.2s infinite linear;
+  box-shadow: none;
+}
+
+.gallery__button {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+}
+
+.gallery__image {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  width: 72%;
+  height: 56%;
+  object-fit: contain;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 12px 14px rgb(16 46 64 / 0.35));
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery__tile:hover .gallery__image {
+  transform: translateX(-50%) scale(1.08) rotate(-2deg);
+}
+
+.gallery__info {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-md);
+}
+
+.gallery__tile--pattern .gallery__info {
+  background: linear-gradient(to top, rgb(16 46 64 / 0.92) 55%, transparent);
+}
+
+.gallery__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.gallery__text {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.gallery__count {
+  margin-top: var(--space-xs);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height var(--transition), opacity var(--transition);
+}
+
+.gallery__tile:hover .gallery__count,
+.gallery__button:focus-visible .gallery__count {
+  max-height: 1.5em;
+  opacity: 1;
+}
+
+.gallery__tile--pattern .gallery__count {
+  color: var(--color-mint);
+}
+
+.gallery__button:focus-visible {
+  outline-offset: -4px;
+}
+
+.gallery__message {
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+@keyframes gallery-shimmer {
+  to { background-position: -200% 0; }
+}
+
+/* Small tiles (phones, tablets): drop the tagline so text never overlaps the photo.
+   Based on the tile's own width, so it works at any screen size. */
+@container (max-width: 260px) {
+  .gallery__image {
+    top: 9%;
+    height: 50%;
+  }
+
+  .gallery__info {
+    padding: var(--space-sm) var(--space-md) var(--space-md);
+  }
+
+  .gallery__title {
+    font-size: 1rem;
+  }
+
+  .gallery__text {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .gallery__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* No hover on touch screens: always show the product count */
+@media (hover: none) {
+  .gallery__count {
+    max-height: 1.5em;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery__tile--loading {
+    animation: none;
+  }
+
+  .gallery__tile:hover .gallery__image {
+    transform: translateX(-50%);
+  }
+}
