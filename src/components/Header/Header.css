@@ -1,0 +1,124 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-mist);
+  box-shadow: 0 2px 8px rgb(16 46 64 / 0.08);
+}
+
+.header__topbar {
+  background: var(--color-navy);
+  color: var(--color-mint);
+  font-size: 0.8rem;
+}
+
+.header__topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+}
+
+.header__social {
+  display: flex;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.header__social-link {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
+  background: var(--color-mist);
+  color: var(--color-navy);
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.header__nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+}
+
+.header__logo {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: var(--color-navy);
+  color: var(--color-text-inverse);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.header__logo-accent {
+  color: var(--color-green);
+}
+
+.header__toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: var(--space-sm);
+  border: 0;
+  background: transparent;
+}
+
+.header__toggle-bar {
+  width: 24px;
+  height: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--color-navy);
+}
+
+.header__menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: none;
+  flex-direction: column;
+  margin: 0;
+  padding: var(--space-md);
+  list-style: none;
+  background: var(--color-mist);
+  box-shadow: 0 8px 16px rgb(16 46 64 / 0.12);
+}
+
+.header__menu--open {
+  display: flex;
+}
+
+.header__link {
+  display: block;
+  padding: var(--space-sm) 0;
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+}
+
+.header__link:hover {
+  color: var(--color-forest);
+  border-color: var(--color-green);
+}
+
+@media (min-width: 768px) {
+  .header__toggle {
+    display: none;
+  }
+
+  .header__menu {
+    position: static;
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-lg);
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+}
