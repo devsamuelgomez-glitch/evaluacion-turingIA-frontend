@@ -21,17 +21,40 @@ function writeSession(session) {
   }
 }
 
+// Expiry time (ms) from the JWT payload. Only read to schedule the logout: the API verifies the signature.
+function tokenExpiry(token) {
+  try {
+    const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const { exp } = JSON.parse(atob(payload));
+    return typeof exp === 'number' ? exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
+
+function isExpired(token) {
+  const expiry = tokenExpiry(token);
+  return expiry === null || expiry <= Date.now();
+}
+
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(() => {
+  const [initial] = useState(() => {
     const saved = readSession();
-    if (saved?.token) api.setAuthToken(saved.token);
-    return saved;
+    if (!saved) return { session: null, dropped: false };
+    // A malformed or expired token is dropped right away instead of waiting for the API to reject it
+    if (!saved.token || isExpired(saved.token)) {
+      writeSession(null);
+      return { session: null, dropped: true };
+    }
+    api.setAuthToken(saved.token);
+    return { session: saved, dropped: false };
   });
+  const [session, setSession] = useState(initial.session);
   // 'checking' while a saved token is validated against the API on load
   const [status, setStatus] = useState(() => (session?.token ? 'checking' : 'ready'));
   // Why the session ended: 'manual' (user clicked logout) or 'expired' (API answered 401).
-  // ProtectedRoute uses it to send manual logouts home instead of to /login.
-  const [logoutReason, setLogoutReason] = useState(null);
+  // ProtectedRoute and LoginPage use it to decide where to return and whether to show "session expired".
+  const [logoutReason, setLogoutReason] = useState(initial.dropped ? 'expired' : null);
 
   const saveSession = useCallback((next) => {
     api.setAuthToken(next?.token ?? null);
@@ -48,6 +71,15 @@ export function AuthProvider({ children }) {
     api.setUnauthorizedHandler(() => logout('expired'));
     return () => api.setUnauthorizedHandler(null);
   }, [logout]);
+
+  // End the session when the token expires, even if the user makes no further requests
+  useEffect(() => {
+    const expiry = session?.token && tokenExpiry(session.token);
+    if (!expiry) return;
+    // setTimeout overflows past ~24.8 days; tokens here last hours
+    const timer = setTimeout(() => logout('expired'), Math.min(expiry - Date.now(), 2 ** 31 - 1));
+    return () => clearTimeout(timer);
+  }, [session, logout]);
 
   // Validate the saved token once; an expired token clears the session (via the 401 handler)
   useEffect(() => {

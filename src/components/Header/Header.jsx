@@ -4,7 +4,8 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
 import './Header.css';
 
-// Section anchors live on the store page; "/#..." also works from /login or /admin
+// Section anchors live on the store page; "/#..." also works from /admin.
+// The header is only rendered inside the protected layout, so there is always a user.
 const links = [
   { href: '/#productos', label: 'Productos' },
   { href: '/#categorias', label: 'Categorías' },
@@ -19,7 +20,7 @@ export default function Header() {
   const close = () => setOpen(false);
 
   function handleLogout() {
-    // On protected pages, ProtectedRoute sends a manual logout back to the store
+    // ProtectedRoute sends the now signed-out visitor to /login
     logout();
     close();
     toast.success('Sesión cerrada');
@@ -66,21 +67,15 @@ export default function Header() {
           </ul>
 
           <div className="header__account">
-            {user ? (
-              <>
-                <span className="header__user" title={user.email}>
-                  <span className="header__avatar" aria-hidden="true">{user.name.charAt(0).toUpperCase()}</span>
-                  <span className="header__user-name">{user.name.split(' ')[0]}</span>
-                  {isAdmin && <span className="header__badge">Admin</span>}
-                </span>
-                {isAdmin && (
-                  <NavLink to="/admin" className="button button--primary button--small" onClick={close}>Panel admin</NavLink>
-                )}
-                <button type="button" className="button button--outline button--small" onClick={handleLogout}>Cerrar sesión</button>
-              </>
-            ) : (
-              <Link to="/login" className="button button--primary button--small" onClick={close}>Iniciar sesión</Link>
+            <span className="header__user" title={user.email}>
+              <span className="header__avatar" aria-hidden="true">{user.name.charAt(0).toUpperCase()}</span>
+              <span className="header__user-name">{user.name.split(' ')[0]}</span>
+              {isAdmin && <span className="header__badge">Admin</span>}
+            </span>
+            {isAdmin && (
+              <NavLink to="/admin" className="button button--primary button--small" onClick={close}>Panel admin</NavLink>
             )}
+            <button type="button" className="button button--outline button--small" onClick={handleLogout}>Cerrar sesión</button>
           </div>
         </div>
       </nav>

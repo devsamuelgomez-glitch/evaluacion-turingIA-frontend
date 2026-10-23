@@ -112,17 +112,6 @@
   text-align: center;
 }
 
-.testimonials__login {
-  color: var(--color-text-muted);
-}
-
-.testimonials__login-link {
-  font-weight: 700;
-  color: var(--color-forest);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
 .review-form {
   display: grid;
   gap: var(--space-md);

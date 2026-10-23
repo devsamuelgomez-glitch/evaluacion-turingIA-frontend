@@ -58,6 +58,12 @@ textarea.field__input {
   color: #8c2a1f;
 }
 
+.alert--info {
+  border: 1px solid var(--color-mist);
+  background: #f2fbf8;
+  color: var(--color-forest);
+}
+
 .button--danger {
   background: var(--color-error);
   color: #fff;

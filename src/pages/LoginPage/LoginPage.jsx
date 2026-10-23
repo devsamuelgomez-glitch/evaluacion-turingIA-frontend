@@ -13,8 +13,18 @@ const DEMO_ACCOUNTS = [
 
 const EMPTY = { name: '', email: '', password: '' };
 
+const homeFor = (user) => (user.role === 'admin' ? '/admin' : '/');
+
+// Where to go after signing in. Only same-app paths are accepted ("//host" would leave the site),
+// and /admin is only a valid destination for admins.
+function safeRedirect(from, user) {
+  if (typeof from !== 'string' || !from.startsWith('/') || from.startsWith('//')) return homeFor(user);
+  if (from.startsWith('/admin') && user.role !== 'admin') return '/';
+  return from;
+}
+
 export default function LoginPage() {
-  const { user, login, register } = useAuth();
+  const { user, logoutReason, login, register } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,7 +34,7 @@ export default function LoginPage() {
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  if (user && !submitting) return <Navigate to={user.role === 'admin' ? '/admin' : '/'} replace />;
+  if (user && !submitting) return <Navigate to={safeRedirect(location.state?.from, user)} replace />;
 
   const isLogin = mode === 'login';
 
@@ -53,9 +63,9 @@ export default function LoginPage() {
       const loggedIn = isLogin
         ? await login({ email: form.email, password: form.password })
         : await register(form);
-      toast.success(isLogin ? `¡Hola de nuevo, ${loggedIn.name.split(' ')[0]}!` : '¡Cuenta creada! Ya puedes dejar reseñas.');
-      const fallback = loggedIn.role === 'admin' ? '/admin' : '/';
-      navigate(location.state?.from ?? fallback, { replace: true });
+      const firstName = loggedIn.name.split(' ')[0];
+      toast.success(isLogin ? `¡Hola de nuevo, ${firstName}!` : `¡Bienvenido a TechStore, ${firstName}!`);
+      navigate(safeRedirect(location.state?.from, loggedIn), { replace: true });
     } catch (err) {
       setErrors(fieldErrors(err));
       setFormError(err.details ? 'Revisa los campos marcados.' : err.message);
@@ -67,9 +77,10 @@ export default function LoginPage() {
     <main className="auth">
       <div className="auth__card">
         <div className="auth__intro">
+          <p className="auth__logo">Tech<span className="auth__logo-accent">Store</span></p>
           <h1 className="auth__title">{isLogin ? 'Inicia sesión' : 'Crea tu cuenta'}</h1>
           <p className="auth__subtitle">
-            {isLogin ? 'Accede para dejar reseñas o administrar el catálogo.' : 'Regístrate para opinar sobre tus productos favoritos.'}
+            {isLogin ? 'Accede con tu cuenta para entrar a la tienda.' : 'Regístrate para explorar el catálogo y dejar reseñas.'}
           </p>
         </div>
 
@@ -84,6 +95,9 @@ export default function LoginPage() {
 
         <form className="auth__form" onSubmit={handleSubmit} noValidate>
           {formError && <p className="alert alert--error" role="alert">{formError}</p>}
+          {!formError && logoutReason === 'expired' && (
+            <p className="alert alert--info" role="status">Tu sesión expiró. Vuelve a iniciar sesión para continuar.</p>
+          )}
 
           {!isLogin && (
             <div className="field">

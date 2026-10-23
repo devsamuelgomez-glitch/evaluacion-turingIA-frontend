@@ -1,16 +1,14 @@
-import { useEffect, useRef } from 'react';
-import { Link, Navigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import './ProtectedRoute.css';
 
-/** Requires a session (and optionally a role). Unauthenticated users go to /login and come back after. */
+/**
+ * Requires a session (and optionally a role). Wraps a single page via `children`,
+ * or a group of nested routes as a layout route (renders the <Outlet />).
+ */
 export default function ProtectedRoute({ role, children }) {
   const { user, status, logoutReason } = useAuth();
   const location = useLocation();
-  // Whether this page showed a signed-in user at its last commit (updated in an effect, not during render)
-  const hadUser = useRef(Boolean(user));
-  const loggedOutHere = hadUser.current && !user && logoutReason === 'manual';
-  useEffect(() => { hadUser.current = Boolean(user); }, [user]);
 
   if (status === 'checking') {
     return (
@@ -22,9 +20,11 @@ export default function ProtectedRoute({ role, children }) {
   }
 
   if (!user) {
-    // Logging out from this page goes back to the store; anything else asks to sign in and returns here after
-    if (loggedOutHere) return <Navigate to="/" replace />;
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    // After a manual logout the next person starts fresh; otherwise come back here after signing in
+    const state = logoutReason === 'manual'
+      ? undefined
+      : { from: location.pathname + location.search + location.hash };
+    return <Navigate to="/login" replace state={state} />;
   }
 
   if (role && user.role !== role) {
@@ -38,5 +38,5 @@ export default function ProtectedRoute({ role, children }) {
     );
   }
 
-  return children;
+  return children ?? <Outlet />;
 }

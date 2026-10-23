@@ -42,13 +42,15 @@ En la pantalla de login hay botones que llenan estas credenciales.
 
 | Ruta | Acceso | Contenido |
 |---|---|---|
-| `/` | Público | Tienda (Wireframe A) |
-| `/login` | Público | Iniciar sesión / registrarse |
+| `/login` | Público | Iniciar sesión / registrarse (la única página pública) |
+| `/` | Con sesión | Tienda (Wireframe A) |
 | `/admin` | Solo admin | Panel de administración de productos |
 
-- **Sesión:** `AuthContext` guarda el token JWT y el usuario en `localStorage`. Al cargar la página valida el token con `GET /auth/me`; si el token expiró, o cualquier petición responde 401, la sesión se cierra sola.
-- **Rutas protegidas:** sin sesión, `/admin` redirige a `/login` y regresa al panel después de entrar. Un usuario sin rol admin ve un aviso 403. Al cerrar sesión desde el panel se vuelve a la tienda.
-- **Header:** muestra "Iniciar sesión" o el usuario con su rol, el enlace al panel (solo admin) y "Cerrar sesión", también en el menú móvil.
+- **Login obligatorio:** todas las rutas, salvo `/login`, están dentro de una ruta layout protegida (`ProtectedRoute` + `<Outlet />`). Sin sesión, cualquier URL (incluidas `/admin` o rutas inexistentes) redirige a `/login`. La API también exige el token, así que los datos no se pueden leer sin iniciar sesión.
+- **Regreso a la página pedida:** si entras con un enlace directo (por ejemplo `/admin?tab=x`), después del login vuelves ahí. Solo se aceptan rutas internas (se bloquean redirecciones abiertas como `//otro-sitio`), y un usuario sin rol admin que venía de `/admin` va a la tienda. Al cerrar sesión no se guarda la ruta, para que la siguiente persona empiece desde cero.
+- **Sesión:** `AuthContext` guarda el token JWT y el usuario en `localStorage`. Al cargar, descarta de inmediato un token malformado o vencido (lee el `exp` del JWT) y valida el resto con `GET /auth/me`. Un temporizador cierra la sesión justo cuando el token expira, y cualquier 401 de la API también la cierra. En esos casos el login muestra "Tu sesión expiró".
+- **Roles:** un usuario sin rol admin que abre `/admin` ve un aviso 403.
+- **Header:** solo aparece con sesión. Muestra el usuario con su rol, el enlace al panel (solo admin) y "Cerrar sesión", también en el menú móvil.
 
 ## Secciones de la tienda (Wireframe A)
 
@@ -62,7 +64,7 @@ En la pantalla de login hay botones que llenan estas credenciales.
 | Footer | `Footer` | Estático |
 
 - **Grid de productos:** pestañas de categoría (un dropdown en móvil), "Cargar más", skeletons, transición sin parpadeo entre categorías y precarga de imágenes.
-- **Testimonios:** las 3 reseñas más recientes, con la más nueva al centro como en el wireframe. Los usuarios con sesión pueden publicar una reseña desde un modal con selector de estrellas.
+- **Testimonios:** las 3 reseñas más recientes, con la más nueva al centro como en el wireframe. Cualquier usuario puede publicar una reseña desde un modal con selector de estrellas.
 
 ## Panel de administración
 

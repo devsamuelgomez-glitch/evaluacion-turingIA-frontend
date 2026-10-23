@@ -1,7 +1,7 @@
 .auth {
   display: grid;
   place-items: center;
-  min-height: calc(100dvh - 96px);
+  min-height: 100dvh;
   padding: var(--space-xl) var(--space-md);
   background:
     radial-gradient(circle at 15% 20%, rgb(31 191 146 / 0.18), transparent 40%),
@@ -22,6 +22,22 @@
 .auth__intro {
   margin-bottom: var(--space-lg);
   text-align: center;
+}
+
+/* Same mark as .header__logo: the header isn't shown on the login screen */
+.auth__logo {
+  display: inline-block;
+  margin-bottom: var(--space-md);
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: var(--color-navy);
+  color: var(--color-text-inverse);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.auth__logo-accent {
+  color: var(--color-green);
 }
 
 .auth__title {

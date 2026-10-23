@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { getReviews } from '../../services/api.js';
-import { useAuth } from '../../context/AuthContext.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
 import { initials } from '../../utils/format.js';
 import { StarRating } from '../StarRating/StarRating.jsx';
@@ -15,7 +13,6 @@ const toWireframeOrder = (reviews) =>
   reviews.length === COUNT ? [reviews[1], reviews[0], reviews[2]] : reviews;
 
 export default function Testimonials() {
-  const { user } = useAuth();
   const toast = useToast();
   const [reviews, setReviews] = useState([]);
   const [status, setStatus] = useState('loading');
@@ -86,13 +83,7 @@ export default function Testimonials() {
         )}
 
         <div className="testimonials__cta">
-          {user ? (
-            <button type="button" className="button button--primary" onClick={() => setWriting(true)}>Deja tu reseña</button>
-          ) : (
-            <p className="testimonials__login">
-              <Link to="/login" state={{ from: '/' }} className="testimonials__login-link">Inicia sesión</Link> para dejar tu reseña.
-            </p>
-          )}
+          <button type="button" className="button button--primary" onClick={() => setWriting(true)}>Deja tu reseña</button>
         </div>
       </div>
 
