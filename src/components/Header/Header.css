@@ -79,12 +79,13 @@
 .header__menu {
   position: absolute;
   top: 100%;
-  left: 0;
-  right: 0;
+  /* Bleed past the container's gutter so the dropdown spans the full screen width */
+  left: calc(var(--space-md) * -1);
+  right: calc(var(--space-md) * -1);
   display: none;
   flex-direction: column;
   margin: 0;
-  padding: var(--space-md);
+  padding: var(--space-md) calc(var(--space-md) * 2);
   list-style: none;
   background: var(--color-mist);
   box-shadow: 0 8px 16px rgb(16 46 64 / 0.12);
@@ -92,6 +93,14 @@
 
 .header__menu--open {
   display: flex;
+}
+
+.header__links {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .header__link {
@@ -107,7 +116,49 @@
   border-color: var(--color-green);
 }
 
-@media (min-width: 768px) {
+.header__account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid rgb(16 46 64 / 0.12);
+}
+
+.header__user {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-right: auto;
+  font-weight: 600;
+}
+
+.header__avatar {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-navy);
+  color: var(--color-green);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.header__badge {
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-green);
+  color: var(--color-navy);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Desktop nav needs room for the links plus the account area */
+@media (min-width: 1024px) {
   .header__toggle {
     display: none;
   }
@@ -116,9 +167,27 @@
     position: static;
     display: flex;
     flex-direction: row;
-    gap: var(--space-lg);
+    align-items: center;
+    gap: var(--space-xl);
     padding: 0;
     background: transparent;
     box-shadow: none;
+  }
+
+  .header__links {
+    flex-direction: row;
+    gap: var(--space-lg);
+  }
+
+  .header__account {
+    flex-wrap: nowrap;
+    margin: 0;
+    padding: 0 0 0 var(--space-lg);
+    border-top: 0;
+    border-left: 1px solid rgb(16 46 64 / 0.15);
+  }
+
+  .header__user {
+    margin-right: var(--space-xs);
   }
 }

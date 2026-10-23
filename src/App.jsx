@@ -1,32 +1,27 @@
-import { useCallback, useState } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import Header from './components/Header/Header.jsx';
-import Hero from './components/Hero/Hero.jsx';
-import ProductGrid from './components/ProductGrid/ProductGrid.jsx';
-import Gallery from './components/Gallery/Gallery.jsx';
-import Testimonials from './components/Testimonials/Testimonials.jsx';
-import Footer from './components/Footer/Footer.jsx';
-import { useCategories } from './hooks/useCategories.js';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.jsx';
+import StorePage from './pages/StorePage.jsx';
+import LoginPage from './pages/LoginPage/LoginPage.jsx';
+import AdminPage from './pages/AdminPage/AdminPage.jsx';
 
 export default function App() {
-  const { categories, status: categoriesStatus } = useCategories();
-  const [category, setCategory] = useState('');
-
-  // Picking a category in the gallery filters the grid and scrolls back up to it
-  const showCategory = useCallback((slug) => {
-    setCategory(slug);
-    document.getElementById('productos')?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
-
   return (
     <>
       <Header />
-      <main>
-        <Hero />
-        <ProductGrid categories={categories} category={category} onCategoryChange={setCategory} />
-        <Gallery categories={categories} status={categoriesStatus} onSelect={showCategory} />
-        <Testimonials />
-      </main>
-      <Footer />
+      <Routes>
+        <Route path="/" element={<StorePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </>
   );
 }

@@ -1,0 +1,127 @@
+.auth {
+  display: grid;
+  place-items: center;
+  min-height: calc(100dvh - 96px);
+  padding: var(--space-xl) var(--space-md);
+  background:
+    radial-gradient(circle at 15% 20%, rgb(31 191 146 / 0.18), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgb(108 217 186 / 0.2), transparent 40%),
+    var(--color-bg);
+}
+
+.auth__card {
+  width: 100%;
+  max-width: 440px;
+  padding: var(--space-xl) var(--space-lg);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: 0 20px 50px rgb(16 46 64 / 0.12);
+  animation: auth-in 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.auth__intro {
+  margin-bottom: var(--space-lg);
+  text-align: center;
+}
+
+.auth__title {
+  font-size: 1.6rem;
+}
+
+.auth__subtitle {
+  margin-top: var(--space-xs);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.auth__tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: var(--space-lg);
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-bg);
+}
+
+.auth__tab {
+  padding: 0.55rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  transition: background var(--transition), color var(--transition);
+}
+
+.auth__tab--active {
+  background: var(--color-navy);
+  color: var(--color-green);
+}
+
+.auth__form {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.auth__submit {
+  width: 100%;
+  margin-top: var(--space-xs);
+}
+
+.auth__demo {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px dashed var(--color-mist);
+}
+
+.auth__demo-title {
+  margin-bottom: var(--space-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.auth__demo-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+
+.auth__demo-account {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-sm);
+  border: 2px solid var(--color-mist);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font-size: 0.75rem;
+  text-align: left;
+  overflow-wrap: anywhere;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.auth__demo-account:hover {
+  border-color: var(--color-green);
+  background: #f2fbf8;
+}
+
+.auth__demo-account strong {
+  font-size: 0.85rem;
+  color: var(--color-forest);
+}
+
+@keyframes auth-in {
+  from { opacity: 0; transform: translateY(12px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth__card {
+    animation: none;
+  }
+}
