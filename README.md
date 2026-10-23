@@ -2,9 +2,9 @@
 
 Frontend de la tienda de productos tecnológicos **TechStore**, construido a partir del **Wireframe A** del periodo de prueba de Desarrollo de Software de Turing IA.
 
-**Stack:** React 19 · Vite · CSS con metodología **BEM**
+**Stack:** React 19 · Vite · React Router · CSS con metodología **BEM**
 
-API: repositorio `techstore-api`.
+API: repositorio [`evaluacion-turingIA-backend`](https://github.com/devsamuelgomez-glitch/evaluacion-turingIA-backend).
 
 ## Requisitos
 
@@ -29,41 +29,68 @@ npm run dev                 # http://localhost:5173
 |---|---|---|
 | `VITE_API_URL` | `http://localhost:4000/api` | URL base de la API |
 
-## Secciones (Wireframe A)
+### Cuentas de prueba
+
+| Rol | Correo | Contraseña |
+|---|---|---|
+| admin | `admin@techstore.com` | `Admin123!` |
+| user | `user@techstore.com` | `User123!` |
+
+En la pantalla de login hay botones que llenan estas credenciales.
+
+## Páginas
+
+| Ruta | Acceso | Contenido |
+|---|---|---|
+| `/` | Público | Tienda (Wireframe A) |
+| `/login` | Público | Iniciar sesión / registrarse |
+| `/admin` | Solo admin | Panel de administración de productos |
+
+- **Sesión:** `AuthContext` guarda el token JWT y el usuario en `localStorage`. Al cargar la página valida el token con `GET /auth/me`; si el token expiró, o cualquier petición responde 401, la sesión se cierra sola.
+- **Rutas protegidas:** sin sesión, `/admin` redirige a `/login` y regresa al panel después de entrar. Un usuario sin rol admin ve un aviso 403. Al cerrar sesión desde el panel se vuelve a la tienda.
+- **Header:** muestra "Iniciar sesión" o el usuario con su rol, el enlace al panel (solo admin) y "Cerrar sesión", también en el menú móvil.
+
+## Secciones de la tienda (Wireframe A)
 
 | Sección | Componente | Datos |
 |---|---|---|
-| Barra superior + navegación | `Header` | Estático, menú hamburguesa en móvil |
+| Barra superior + navegación | `Header` | Sesión del usuario; menú hamburguesa en móvil |
 | Hero + 3 beneficios | `Hero` | Estático |
 | Grid de 6 productos | `ProductGrid`, `ProductCard` | **API**: `GET /products` y `GET /categories` |
-| Galería de 4 categorías | `Gallery` | Estático |
-| 3 testimonios en círculo | `Testimonials` | Estático (se conectará a reseñas) |
+| Galería de 4 categorías | `Gallery` | **API**: `GET /categories` (portada por categoría) |
+| 3 testimonios en círculo | `Testimonials`, `ReviewModal` | **API**: `GET /reviews`, `POST /products/:id/reviews` |
 | Footer | `Footer` | Estático |
 
-### Sección conectada a la API
+- **Grid de productos:** pestañas de categoría (un dropdown en móvil), "Cargar más", skeletons, transición sin parpadeo entre categorías y precarga de imágenes.
+- **Testimonios:** las 3 reseñas más recientes, con la más nueva al centro como en el wireframe. Los usuarios con sesión pueden publicar una reseña desde un modal con selector de estrellas.
 
-`ProductGrid` consume la API mediante `src/services/api.js` y el hook `src/hooks/useProducts.js`:
+## Panel de administración
 
-- **Pestañas de categoría**: se generan desde `GET /categories` y filtran los productos.
-- **Cargar más**: pide la siguiente página y la agrega a la lista.
-- Estados de carga (skeletons), error (con botón de reintento) y lista vacía.
-- Las peticiones se cancelan con `AbortController` si el usuario cambia de categoría antes de que terminen.
+- Tabla de productos con búsqueda (con debounce), filtro por categoría, orden y paginación, todo con los query params de `GET /products`.
+- Crear y editar en un modal: validación en el cliente y errores de la API mostrados en cada campo. La imagen se elige de la biblioteca local (`GET /images`) o con una URL externa, con vista previa.
+- Eliminar con un modal de confirmación propio, sin `window.confirm`.
+- Avisos (toasts) de éxito y error; resumen de productos, categorías y marcas.
+- En móvil la tabla se convierte en tarjetas.
 
 ## Estructura
 
 ```
 src/
-├── components/     # Un folder por bloque BEM (JSX + CSS)
-├── hooks/          # useProducts
-├── services/       # Cliente HTTP de la API
-├── styles/         # Variables (paleta) y estilos base
-├── App.jsx
+├── components/     # Bloques BEM reutilizables (Header, Modal, StarRating, ProductGrid…)
+├── context/        # AuthContext (sesión) y ToastContext (avisos)
+├── hooks/          # useProducts, useCategories, useDebouncedValue
+├── pages/          # StorePage, LoginPage, AdminPage
+├── services/       # Cliente HTTP de la API (token y manejo de 401)
+├── styles/         # Variables (paleta), base y formularios
+├── utils/          # Validación, formato e imágenes
+├── App.jsx         # Rutas
 └── main.jsx
 ```
 
 ## Decisiones de diseño
 
-- **BEM**: cada componente es un bloque (`.product-card`), con elementos (`.product-card__price`) y modificadores (`.product-grid__tab--active`). Los estilos viven junto a su componente.
+- **BEM:** cada componente es un bloque (`.product-card`), con elementos (`.product-card__price`) y modificadores (`.product-grid__tab--active`). Los estilos viven junto a su componente.
 - **Paleta 1** del documento de la prueba como variables CSS en `styles/variables.css`.
-- **Mobile first**: puntos de quiebre en 600px, 768px y 960px.
-- **HTML semántico y accesible**: `header`, `nav`, `main`, `section` con `aria-labelledby`, `article`, `figure`/`blockquote`, `role="tablist"` en los filtros y foco visible.
+- **Mobile first:** puntos de quiebre en 600, 768 y 1024 px, y container queries en la galería.
+- **Accesibilidad:** HTML semántico, `aria-*`, modales con foco atrapado y cierre con Esc, selector de estrellas con radios, foco visible y soporte para `prefers-reduced-motion`.
+- **Validación doble:** el cliente valida para dar respuesta inmediata; la API siempre valida de nuevo con Zod.
