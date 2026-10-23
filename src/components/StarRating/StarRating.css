@@ -1,0 +1,35 @@
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  line-height: 1;
+}
+
+.stars--sm { font-size: 0.85rem; }
+.stars--md { font-size: 1.1rem; }
+.stars--lg { font-size: 1.9rem; }
+
+.stars__star {
+  color: var(--color-mist);
+  transition: color var(--transition), transform var(--transition);
+}
+
+.stars__star--on {
+  color: #f2b23a;
+}
+
+.stars--input .stars__star {
+  cursor: pointer;
+}
+
+.stars--input .stars__star:hover {
+  transform: scale(1.15);
+}
+
+.stars--input .stars__star:focus-within {
+  outline: 3px solid var(--color-green);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

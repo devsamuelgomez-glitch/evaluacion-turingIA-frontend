@@ -1,6 +1,5 @@
+import { formatPrice } from '../../utils/format.js';
 import './ProductCard.css';
-
-const currency = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 });
 
 export default function ProductCard({ product }) {
   const { name, description, price, stock, image_url, rating, review_count, category, brand } = product;
@@ -21,7 +20,7 @@ export default function ProductCard({ product }) {
       </div>
 
       <footer className="product-card__footer">
-        <span className="product-card__price">{currency.format(price)}</span>
+        <span className="product-card__price">{formatPrice(price)}</span>
         <span className="product-card__info">
           {rating ? `★ ${rating} (${review_count})` : stock > 0 ? `${stock} disponibles` : 'Agotado'}
         </span>
