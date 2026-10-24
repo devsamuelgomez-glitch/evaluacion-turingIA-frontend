@@ -85,6 +85,10 @@
   margin-top: var(--space-xs);
 }
 
+.auth__slow {
+  text-align: center;
+}
+
 .auth__demo {
   margin-top: var(--space-lg);
   padding-top: var(--space-md);

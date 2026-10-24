@@ -98,6 +98,22 @@ describe('login obligatorio', () => {
     expect(JSON.parse(localStorage.getItem('techstore.session')).user.email).toBe('admin@techstore.com');
   });
 
+  it('si el servidor tarda (arranque en frío), avisa que se está despertando', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      api.login.mockReturnValue(new Promise(() => {}));
+      renderApp('/login');
+      await userEvent.click(screen.getByRole('button', { name: /cuenta de prueba Usuario/ }));
+      await userEvent.click(screen.getByRole('button', { name: 'Entrar' }));
+      expect(screen.getByRole('button', { name: 'Un momento…' })).toBeDisabled();
+      expect(screen.queryByText(/Despertando el servidor/)).not.toBeInTheDocument();
+      await vi.advanceTimersByTimeAsync(4500);
+      expect(await screen.findByText(/Despertando el servidor/)).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('un user que pidió /admin termina en la tienda', async () => {
     api.login.mockResolvedValue({ user: USER, token: tokenExpiringIn(3600) });
     renderApp('/admin');

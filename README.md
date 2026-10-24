@@ -92,6 +92,16 @@ npm test
 
 Además, durante el desarrollo se probó todo el flujo en Chrome real (login, CRUD del panel, reseñas, móvil).
 
+## Despliegue (Vercel)
+
+1. En [Vercel](https://vercel.com): **Add New → Project** e importa este repositorio (Vercel detecta Vite).
+2. Agrega la variable de entorno `VITE_API_URL` con la URL de la API desplegada, por ejemplo `https://techstore-api.onrender.com/api`.
+3. Deploy. [`vercel.json`](vercel.json) redirige todas las rutas a `index.html` (necesario para que `/admin` o `/login` funcionen al recargar), agrega cabeceras de seguridad y cachea los assets con hash.
+
+Después, en la API agrega la URL de Vercel a `CORS_ORIGIN`.
+
+Si la API estuvo inactiva, el primer login puede tardar hasta un minuto mientras Render la despierta; la pantalla de login lo indica.
+
 ## Estructura
 
 ```

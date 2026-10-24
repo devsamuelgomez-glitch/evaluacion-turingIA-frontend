@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
@@ -13,6 +13,7 @@ const DEMO_ACCOUNTS = [
 ];
 
 const EMPTY = { name: '', email: '', password: '' };
+const SLOW_REQUEST_MS = 4000;
 
 export default function LoginPage() {
   const { user, logoutReason, login, register } = useAuth();
@@ -24,6 +25,14 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  // The hosted API sleeps when idle and the first request can take a while; say so instead of looking stuck
+  const [slow, setSlow] = useState(false);
+
+  useEffect(() => {
+    if (!submitting) return;
+    const timer = setTimeout(() => setSlow(true), SLOW_REQUEST_MS);
+    return () => { clearTimeout(timer); setSlow(false); };
+  }, [submitting]);
 
   if (user && !submitting) return <Navigate to={safeRedirect(location.state?.from, user)} replace />;
 
@@ -115,6 +124,11 @@ export default function LoginPage() {
           <button type="submit" className="button button--primary auth__submit" disabled={submitting}>
             {submitting ? 'Un momento…' : isLogin ? 'Entrar' : 'Crear cuenta'}
           </button>
+          {slow && (
+            <p className="field__hint auth__slow" role="status">
+              Despertando el servidor… la primera conexión puede tardar hasta un minuto.
+            </p>
+          )}
         </form>
 
         {isLogin && (
