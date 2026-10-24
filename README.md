@@ -6,6 +6,8 @@ Frontend de la tienda de productos tecnológicos **TechStore**, construido a par
 
 API: repositorio [`evaluacion-turingIA-backend`](https://github.com/devsamuelgomez-glitch/evaluacion-turingIA-backend).
 
+**Demo en vivo:** <https://evaluacion-turing-ia-frontend.vercel.app>. Entra con `admin@techstore.com` / `Admin123!` o `user@techstore.com` / `User123!`, o usa los botones de la pantalla de login. Si la API estuvo inactiva, el primer login puede tardar hasta un minuto (Render gratis).
+
 ## Requisitos
 
 - Node.js 20+ y npm
