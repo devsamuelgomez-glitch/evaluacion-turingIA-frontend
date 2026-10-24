@@ -5,4 +5,9 @@ export default defineConfig({
   plugins: [react()],
   // strictPort: fail instead of silently switching ports, since the API's CORS allows this origin only
   server: { port: 5173, strictPort: true },
+  test: {
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.js',
+    restoreMocks: true,
+  },
 });

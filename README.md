@@ -24,6 +24,8 @@ npm run dev                 # http://localhost:5173
 | `npm run dev` | Servidor de desarrollo |
 | `npm run build` | Build de producción en `dist/` |
 | `npm run preview` | Sirve el build localmente |
+| `npm test` | Pruebas con Vitest |
+| `npm run test:watch` | Pruebas en modo observación |
 
 | Variable | Default | Descripción |
 |---|---|---|
@@ -74,6 +76,22 @@ En la pantalla de login hay botones que llenan estas credenciales.
 - Avisos (toasts) de éxito y error; resumen de productos, categorías y marcas.
 - En móvil la tabla se convierte en tarjetas.
 
+## Pruebas
+
+```bash
+npm test
+```
+
+38 pruebas con **Vitest**, **jsdom** y **Testing Library**. No necesitan la API: las llamadas se simulan.
+
+| Archivo | Qué cubre |
+|---|---|
+| `src/utils/utils.test.js` | Validación de formularios, formato de precios, redirección segura después del login (bloquea `//otro-sitio`), lectura del `exp` del JWT, URLs de imágenes |
+| `src/services/api.test.js` | Cliente HTTP: header Bearer, query params, errores con detalle por campo, un 401 con sesión cierra la sesión |
+| `src/App.test.jsx` | Flujo completo con el router: cualquier URL sin sesión muestra el login, cuentas de prueba, validación, regreso a la página pedida, 403 para `user`, cerrar sesión, token vencido o rechazado y cierre automático al expirar |
+
+Además, durante el desarrollo se probó todo el flujo en Chrome real (login, CRUD del panel, reseñas, móvil).
+
 ## Estructura
 
 ```
@@ -84,7 +102,8 @@ src/
 ├── pages/          # StorePage, LoginPage, AdminPage
 ├── services/       # Cliente HTTP de la API (token y manejo de 401)
 ├── styles/         # Variables (paleta), base y formularios
-├── utils/          # Validación, formato e imágenes
+├── utils/          # Validación, formato, imágenes, JWT y redirección segura
+├── test/           # Configuración y helpers de pruebas
 ├── App.jsx         # Rutas
 └── main.jsx
 ```

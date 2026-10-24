@@ -3,6 +3,7 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
 import { fieldErrors, validateLogin, validateRegister } from '../../utils/validation.js';
+import { safeRedirect } from '../../utils/redirect.js';
 import './LoginPage.css';
 
 // Demo accounts created by the backend seed
@@ -12,16 +13,6 @@ const DEMO_ACCOUNTS = [
 ];
 
 const EMPTY = { name: '', email: '', password: '' };
-
-const homeFor = (user) => (user.role === 'admin' ? '/admin' : '/');
-
-// Where to go after signing in. Only same-app paths are accepted ("//host" would leave the site),
-// and /admin is only a valid destination for admins.
-function safeRedirect(from, user) {
-  if (typeof from !== 'string' || !from.startsWith('/') || from.startsWith('//')) return homeFor(user);
-  if (from.startsWith('/admin') && user.role !== 'admin') return '/';
-  return from;
-}
 
 export default function LoginPage() {
   const { user, logoutReason, login, register } = useAuth();
@@ -135,6 +126,7 @@ export default function LoginPage() {
                   key={account.email}
                   type="button"
                   className="auth__demo-account"
+                  aria-label={`Usar la cuenta de prueba ${account.label} (${account.email})`}
                   onClick={() => { setForm({ ...EMPTY, email: account.email, password: account.password }); setErrors({}); setFormError(''); }}
                 >
                   <strong>{account.label}</strong>

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import * as api from '../services/api.js';
+import { isExpired, tokenExpiry } from '../utils/jwt.js';
 
 const STORAGE_KEY = 'techstore.session';
 const AuthContext = createContext(null);
@@ -19,22 +20,6 @@ function writeSession(session) {
   } catch {
     // Storage can be unavailable (private mode); the session just won't persist
   }
-}
-
-// Expiry time (ms) from the JWT payload. Only read to schedule the logout: the API verifies the signature.
-function tokenExpiry(token) {
-  try {
-    const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-    const { exp } = JSON.parse(atob(payload));
-    return typeof exp === 'number' ? exp * 1000 : null;
-  } catch {
-    return null;
-  }
-}
-
-function isExpired(token) {
-  const expiry = tokenExpiry(token);
-  return expiry === null || expiry <= Date.now();
 }
 
 export function AuthProvider({ children }) {
